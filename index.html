@@ -2,6 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1220">
+<meta name="application-name" content="Life Compass">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life Compass">
+<meta name="description" content="بوصلة حياتي: خريطة يومية لجودة علاقاتك وأولوياتك.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icons/favicon.svg">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <title>Life Compass · بوصلة حياتي</title>
 <style>
 :root{--bg:#0a101c;--surface:#111d2e;--surface2:#16243a;--stroke:#263950;--text:#f3f7fd;--muted:#96abc3;--subtle:#6c849f;--cyan:#65d7f4;--green:#22c55e;--amber:#f7b65b;--red:#fa7883;--white:#fff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;color-scheme:dark}
@@ -61,7 +69,7 @@
     <section class="panel historyPanel"><div class="historyHeader"><h3>رحلتك عبر الأيام</h3><span class="datePill">آخر 14 يوم تقييم</span></div><p class="historySubtitle">متوسط تقييماتك عبر الأيام المسجلة، عشان تلاحظ الاتجاه مش الرقم بس.</p><svg id="trendChart" class="historyGraph" viewBox="0 0 680 165" role="img" aria-label="تاريخ متوسط تقييم جوانب حياتك"></svg></section>
     <section class="panel allPanel"><h3>كل دوائر حياتك <span style="color:var(--subtle);font-size:12px" id="itemCount"></span></h3><p class="historySubtitle">اضغط على أي جانب لتحديث تقييمك وملاحظاتك.</p><div id="allList" class="allList"></div></section>
   </div>
-  <footer class="foot">بياناتك خاصة ومحفوظة على هذا المتصفح فقط. احفظ نسخة احتياطية دوريًا، خاصة قبل تغيير الجهاز أو مسح بيانات المتصفح.<br>Life Compass · نسخة V3.1</footer>
+  <footer class="foot">بياناتك خاصة ومحفوظة على هذا المتصفح فقط. احفظ نسخة احتياطية دوريًا، خاصة قبل تغيير الجهاز أو مسح بيانات المتصفح.<br>Life Compass · نسخة V3 PWA</footer>
 </div>
 
 <div class="modal" id="editorModal" aria-hidden="true"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
@@ -153,7 +161,7 @@ function render(){
  $('focusAction').textContent=focus?(focus.next||'حدد خطوة صغيرة وممكنة لهذا الجانب.'):'ابدأ بإضافة جانب';
  $('focusEditBtn').textContent=focus?'تحديث الاتجاه ده ←':'إضافة أول جانب +';
  const priorities=$('priorityList');priorities.replaceChildren();
- items.slice(0,5).forEach((i,idx)=>{const b=document.createElement('button');b.type='button';b.className='priorityItem';const rank=document.createElement('span');rank.className='priorityRank';rank.textContent=idx+1;const middle=document.createElement('span');middle.className='priorityName';middle.textContent=i.name;const sub=document.createElement('small');sub.className='priorityMeta';sub.textContent=i.next|| (idx===0?'اتجاهك الأساسي الآن':'اضغط لتحديث التقييم');middle.append(sub);const score=document.createElement('span');score.className='priorityScore';score.style.color=scoreColor(i.score);score.textContent=`${i.score}/10`;b.append(rank,middle,score);b.onclick=()=>openEditor(i.id);priorities.append(b)});
+ items.slice(0,5).forEach((i,idx)=>{const b=document.createElement('button');b.type='button';b.className='priorityItem';const rank=document.createElement('span');rank.className='priorityRank';rank.textContent=idx+1;const middle=document.createElement('span');middle.className='priorityName';middle.textContent=i.name;const sub=document.createElement('small');sub.className='priorityMeta';sub.textContent=i.next|| (idx===0?'أعلى أولوية حاليًا':'اضغط لتحديث التقييم');middle.append(sub);const score=document.createElement('span');score.className='priorityScore';score.style.color=scoreColor(i.score);score.textContent=`${i.score}/10`;b.append(rank,middle,score);b.onclick=()=>openEditor(i.id);priorities.append(b)});
  if(!n){const p=document.createElement('p');p.className='historySubtitle';p.textContent='لا توجد جوانب بعد.';priorities.append(p)}
  const all=$('allList');all.replaceChildren();items.forEach(i=>{const b=document.createElement('button');b.type='button';b.className='allItem';const name=document.createElement('span');name.className='name';name.textContent=i.name;const sc=document.createElement('span');sc.className='sc';sc.style.color=scoreColor(i.score);sc.textContent=`${i.score}/10`;b.append(name,sc);b.onclick=()=>openEditor(i.id);all.append(b)});
 }
@@ -177,5 +185,10 @@ $('fileInput').addEventListener('change',async e=>{const file=e.target.files?.[0
 $('todayText').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 save();
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
 </script>
 </body></html>
